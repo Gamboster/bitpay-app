@@ -31,6 +31,8 @@ export const logReducer = (
       };
 
     case LogActionTypes.ADD_PERSISTED_LOG:
+      console.log('------ avoiding persist logs 1');
+      return state;
       const newPersistedLog = {
         timestamp: action.payload.timestamp,
         level: action.payload.level,
@@ -40,11 +42,11 @@ export const logReducer = (
       // Store persisted logs in a different entry in storage
       // to avoid losing them if anything happens to persist:root
       try {
-        const persistLogs = storage.getString('persist:logs') || '[]';
-        storage.set(
-          'persist:logs',
-          JSON.stringify([...JSON.parse(persistLogs), newPersistedLog]),
-        );
+        // const persistLogs = storage.getString('persist:logs') || '[]';
+        // storage.set(
+        //   'persist:logs',
+        //   JSON.stringify([...JSON.parse(persistLogs), newPersistedLog]),
+        // );
       } catch (error) {
         // nothing
       }
@@ -55,30 +57,32 @@ export const logReducer = (
       };
 
     case LogActionTypes.CLEAR_LOGS:
-      const weekAgo = moment().subtract(7, 'day').toDate();
+      console.log('------ avoiding persist logs 2');
 
-      // Store persisted logs in a different entry in storage
-      // to avoid losing them if anything happens to persist:root
-      try {
-        const persistLogs = storage.getString('persist:logs');
-        if (persistLogs) {
-          storage.set(
-            'persist:logs',
-            JSON.stringify(
-              (JSON.parse(persistLogs) || []).filter(
-                (logEvent: LogEntry) => new Date(logEvent.timestamp) > weekAgo,
-              ),
-            ),
-          );
-        }
-      } catch (error) {
-        // nothing
-      }
+      // const weekAgo = moment().subtract(7, 'day').toDate();
 
-      return {
-        ...state,
-        logs: [],
-      };
+      // // Store persisted logs in a different entry in storage
+      // // to avoid losing them if anything happens to persist:root
+      // try {
+      //   const persistLogs = storage.getString('persist:logs');
+      //   if (persistLogs) {
+      //     storage.set(
+      //       'persist:logs',
+      //       JSON.stringify(
+      //         (JSON.parse(persistLogs) || []).filter(
+      //           (logEvent: LogEntry) => new Date(logEvent.timestamp) > weekAgo,
+      //         ),
+      //       ),
+      //     );
+      //   }
+      // } catch (error) {
+      //   // nothing
+      // }
+
+      // return {
+      //   ...state,
+      //   logs: [],
+      // };
 
     default:
       return state;

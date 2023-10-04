@@ -48,9 +48,9 @@ export const bootstrapWallets = (
       } catch (err: unknown) {
         const errStr = err instanceof Error ? err.message : JSON.stringify(err);
         const errorLog = `Failed to bindWalletClient - ${wallet.id} - ${errStr}`;
-        if (logHandler) {
-          logHandler(LogActions.persistLog(LogActions.error(errorLog)));
-        }
+        // if (logHandler) {
+        //   logHandler(LogActions.persistLog(LogActions.error(errorLog)));
+        // }
       }
     })
     .filter((w): w is NonNullable<typeof w> => w !== undefined);
@@ -79,9 +79,9 @@ export const bootstrapKey = (
     } catch (err: unknown) {
       const errStr = err instanceof Error ? err.message : JSON.stringify(err);
       const errorLog = `Failed to bindWalletKeys - ${id} - ${errStr}`;
-      if (logHandler) {
-        logHandler(LogActions.persistLog(LogActions.error(errorLog)));
-      }
+      // if (logHandler) {
+      //   logHandler(LogActions.persistLog(LogActions.error(errorLog)));
+      // }
     }
   }
 };

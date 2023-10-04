@@ -12,7 +12,7 @@ import {createLogger} from 'redux-logger'; // https://github.com/LogRocket/redux
 import {getUniqueId} from 'react-native-device-info';
 import {createTransform, persistStore, persistReducer} from 'redux-persist'; // https://github.com/rt2zz/redux-persist
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
-import {encryptTransform} from 'redux-persist-transform-encrypt'; // https://github.com/maxdeviant/redux-persist-transform-encrypt
+// import {encryptTransform} from 'redux-persist-transform-encrypt'; // https://github.com/maxdeviant/redux-persist-transform-encrypt
 import thunkMiddleware, {ThunkAction} from 'redux-thunk'; // https://github.com/reduxjs/redux-thunk
 import {Selector} from 'reselect';
 import {bindWalletKeys, transformContacts} from './transforms/transforms';
@@ -65,14 +65,17 @@ export const storage = new MMKV();
 
 export const reduxStorage: Storage = {
   setItem: (key, value) => {
+    console.log("%%%%%%%%%%%%% reduxStorage setItem key,value: ", key, value);
     storage.set(key, value);
     return Promise.resolve(true);
   },
   getItem: key => {
     const value = storage.getString(key);
+    console.log("%%%%%%%%%%%%% reduxStorage getItem key,value: ", key, value);
     return Promise.resolve(value);
   },
   removeItem: key => {
+    console.log("%%%%%%%%%%%%% reduxStorage removeItem key: ", key);
     storage.delete(key);
     return Promise.resolve();
   },
@@ -160,7 +163,7 @@ const getStore = () => {
 
   if (__DEV__ && !(DISABLE_DEVELOPMENT_LOGGING === 'true')) {
     // @ts-ignore
-    middlewares.push(logger);
+    // middlewares.push(logger);
   }
 
   let middlewareEnhancers = applyMiddleware(...middlewares);
@@ -191,19 +194,19 @@ const getStore = () => {
 
         return inboundState;
       }),
-      encryptTransform({
-        secretKey: getUniqueId(),
-        onError: err => {
-          const errStr =
-            err instanceof Error ? err.message : JSON.stringify(err);
+      // encryptTransform({
+      //   secretKey: getUniqueId(),
+      //   onError: err => {
+      //     const errStr =
+      //       err instanceof Error ? err.message : JSON.stringify(err);
 
-          store.dispatch(
-            LogActions.persistLog(
-              LogActions.error(`Encrypt transform failed - ${errStr}`),
-            ),
-          );
-        },
-      }),
+      //     store.dispatch(
+      //       LogActions.persistLog(
+      //         LogActions.error(`Encrypt transform failed - ${errStr}`),
+      //       ),
+      //     );
+      //   },
+      // }),
     ],
   };
 

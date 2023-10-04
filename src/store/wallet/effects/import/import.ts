@@ -8,6 +8,7 @@ import {
 import {Effect, storage} from '../../../index';
 import {BwcProvider} from '../../../../lib/bwc';
 import merge from 'lodash.merge';
+import cloneDeep from 'lodash.clonedeep';
 import {
   buildKeyObj,
   buildMigrationKeyObj,
@@ -91,6 +92,7 @@ import {
 import {t} from 'i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNRestart from 'react-native-restart';
+import { sleep } from '../../../../utils/helper-methods';
 
 const BWC = BwcProvider.getInstance();
 
@@ -120,31 +122,60 @@ export const startMigrationMMKVStorage =
     dispatch(LogActions.info('[startMigrationMMKVStorage] - starting...'));
     try {
       const keys = await AsyncStorage.getAllKeys();
-      if (!keys.includes('persist:root')) {
+      console.log('$$$$$$$$$$$$$$$$$$$1', storage.getString('persist:root'));
+      if (storage.getString('persist:root')) {
         dispatch(setMigrationMMKVStorageComplete());
         dispatch(LogActions.info('[MMKVStorage] nothing to migrate'));
         if (storage.getString('persist:root')) {
-          dispatch(
-            LogActions.persistLog(
-              LogActions.info('success [setMigrationMMKVStorageComplete]'),
-            ),
-          );
+          console.log('==========console.log success [setMigrationMMKVStorageComplete]');
+          // dispatch(
+          //   LogActions.persistLog(
+          //     LogActions.info('success [setMigrationMMKVStorageComplete]'),
+          //   ),
+          // );
         }
         return Promise.resolve();
       }
       const value = await AsyncStorage.getItem('persist:root');
+      console.log('======== AsyncStorage.getItem(persist:root) value:', value);
       if (value != null) {
-        storage.set('persist:root', value);
+        console.log('------------- value != null');
+        storage.set('persist:root', cloneDeep(value));
       }
-      await AsyncStorage.multiRemove(keys);
+      console.log('================== storage.getString(persist:root)1 = ', storage.getString('persist:root'));
+      // storage.set('hasMigratedFromAsyncStorage', true);
+      console.log('-------- comienza sleep(6000)');
+      await sleep(6000);
+      console.log('-------- termina sleep(6000)');
+      console.log('================== storage.getString(persist:root)2 = ', storage.getString('persist:root'));
+      console.log('====== avoid removing old keys');
+      // await AsyncStorage.multiRemove(keys);
+
+      console.log('-------- comienza sleep2(6000)');
+      await sleep(6000);
+      console.log('-------- termina sleep2(6000)');
+      console.log('================== storage.getString(persist:root)3 = ', storage.getString('persist:root'));
+      if (value != null) {
+        console.log('-------------2 value != null');
+        storage.set('persist:root', cloneDeep(value));
+      }
+      console.log('-------- comienza sleep3(6000)');
+      await sleep(6000);
+      console.log('-------- termina sleep3(6000)');
+      console.log('================== storage.getString(persist:root)4 = ', storage.getString('persist:root'));
+      await sleep(2000);
+
+      console.log('-------- launching RNRestart.restart()');
       RNRestart.restart();
     } catch (err) {
       const errStr = err instanceof Error ? err.message : JSON.stringify(err);
-      dispatch(
-        LogActions.persistLog(
-          LogActions.error('[migrationMMKVStorage] failed - ', errStr),
-        ),
-      );
+      console.log('==========console.log [migrationMMKVStorage] failed - ', errStr);
+
+      // dispatch(
+      //   LogActions.persistLog(
+      //     LogActions.error('[migrationMMKVStorage] failed - ', errStr),
+      //   ),
+      // );
     }
   };
 
@@ -1321,3 +1352,4 @@ const linkTokenToWallet = (tokens: Wallet[], wallets: Wallet[]) => {
 
   return wallets;
 };
+

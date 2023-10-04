@@ -18,6 +18,8 @@ export const contactReducer = (
   state: ContactState = initialState,
   action: ContactActionType,
 ) => {
+  console.log('============ contactReducer state: ', JSON.stringify(state));
+  console.log('============ contactReducer action: ', JSON.stringify(action));
   switch (action.type) {
     case ContactActionTypes.CREATE_CONTACT:
       if (
